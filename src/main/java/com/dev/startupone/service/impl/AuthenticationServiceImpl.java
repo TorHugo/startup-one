@@ -1,14 +1,14 @@
 package com.dev.startupone.service.impl;
 
 import com.dev.startupone.lib.domain.UserModel;
-import com.dev.startupone.lib.dto.AuthenticationRequest;
-import com.dev.startupone.lib.dto.AuthenticationResponse;
+import com.dev.startupone.lib.dto.AuthRequest;
+import com.dev.startupone.lib.dto.AuthResponse;
 import com.dev.startupone.lib.dto.RegisterRequest;
 import com.dev.startupone.lib.enums.Role;
 import com.dev.startupone.lib.exception.impl.DataBaseException;
 import com.dev.startupone.repository.UserRepository;
+import com.dev.startupone.security.JwtService;
 import com.dev.startupone.service.AuthenticationService;
-import com.dev.startupone.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,8 +17,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+
+import static com.dev.startupone.lib.util.ConstantsUtils.DEFAULT_VERSION;
 
 @Service
 @RequiredArgsConstructor
@@ -30,27 +32,32 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+
     @Override
-    public AuthenticationResponse register(final RegisterRequest request) {
-        log.info("[0] - Validating existing user. E-mail: [{}].", request.getEmail());
-        if (validatingExistingUser(request.getEmail()))
-            throw new DataBaseException("User " + request.getEmail() + " exists in the database!.");
-
+    public AuthResponse register(final RegisterRequest request) {
+        log.info("[0] - Validating existing user. E-mail: [{}].", request.email());
+        if (validatingExistingUser(request.email()))
+            throw new DataBaseException("User " + request.email() + " exists in the database!.");
         log.info("[1] - Mapping new user.");
-        var user = UserModel.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
-                .build();
-
+        var user = requestToUser(request);
         log.info("[2] - Saving to user in the database.");
-        saveToUser(user);
-
+        var userId = saveToUser(user);
         log.info("[3] - Generate Access TOKEN.");
-        return AuthenticationResponse.builder()
+        return AuthResponse.builder()
                 .token(jwtService.generateToken(user))
+                .userId(userId)
+                .build();
+    }
+
+    private UserModel requestToUser(RegisterRequest request) {
+        return UserModel.builder()
+                .firstName(request.firstName())
+                .lastName(request.lastName())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .role(Role.USER)
+                .creatAt(LocalDateTime.now())
+                .updateAt(null)
                 .build();
     }
 
@@ -59,23 +66,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return !lsUser.isEmpty();
     }
 
-    private void saveToUser(final UserModel user){
-        userRepository.save(user);
+    private Long saveToUser(final UserModel user){
+        UserModel savedUser = userRepository.save(user);
+        return savedUser.getId();
     }
 
     @Override
-    public AuthenticationResponse authenticate(final AuthenticationRequest request) {
+    public AuthResponse authenticate(final AuthRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
+                        request.email(),
+                        request.password()
                 )
         );
-        var user = userRepository.findByEmail(request.getEmail())
+        var user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
 
-        return AuthenticationResponse.builder()
+        return AuthResponse.builder()
                 .token(jwtService.generateToken(user))
+                .userId(user.getId())
                 .build();
     }
 }

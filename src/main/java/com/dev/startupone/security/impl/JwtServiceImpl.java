@@ -1,6 +1,6 @@
-package com.dev.startupone.service.impl;
+package com.dev.startupone.security.impl;
 
-import com.dev.startupone.service.JwtService;
+import com.dev.startupone.security.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

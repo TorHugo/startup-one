@@ -1,4 +1,4 @@
-package com.dev.startupone.service;
+package com.dev.startupone.security;
 
 import io.jsonwebtoken.Claims;
 import org.springframework.security.core.userdetails.UserDetails;

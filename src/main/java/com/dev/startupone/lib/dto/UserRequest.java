@@ -1,9 +1,6 @@
 package com.dev.startupone.lib.dto;
 
-import lombok.Builder;
-
-@Builder
-public record RegisterRequest(
+public record UserRequest(
         String firstName,
         String lastName,
         String email,

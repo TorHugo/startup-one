@@ -1,7 +1,7 @@
 package com.dev.startupone.resource;
 
-import com.dev.startupone.lib.dto.AuthenticationRequest;
-import com.dev.startupone.lib.dto.AuthenticationResponse;
+import com.dev.startupone.lib.dto.AuthRequest;
+import com.dev.startupone.lib.dto.AuthResponse;
 import com.dev.startupone.lib.dto.RegisterRequest;
 import com.dev.startupone.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +19,15 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
+    public ResponseEntity<AuthResponse> register(
             @RequestBody final RegisterRequest request
     ) {
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody final AuthenticationRequest request
+    public ResponseEntity<AuthResponse> authenticate(
+            @RequestBody final AuthRequest request
     ) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
