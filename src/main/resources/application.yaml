@@ -1,0 +1,14 @@
+## DATABASE
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
+    username: ${oracle-username-fiap}
+    password: ${oracle-password-fiap}
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
