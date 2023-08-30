@@ -35,11 +35,16 @@ public class UserModel implements UserDetails {
 
     private String password;
 
+    private String cpfcnpj;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
     private LocalDateTime creatAt;
+
     private LocalDateTime updateAt;
+
+    private String paymentId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -69,5 +74,9 @@ public class UserModel implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getCompletName(){
+        return this.firstName + " " + this.lastName;
     }
 }

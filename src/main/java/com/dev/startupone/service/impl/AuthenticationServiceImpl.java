@@ -6,6 +6,7 @@ import com.dev.startupone.lib.dto.AuthResponse;
 import com.dev.startupone.lib.dto.RegisterRequest;
 import com.dev.startupone.lib.enums.Role;
 import com.dev.startupone.lib.exception.impl.DataBaseException;
+import com.dev.startupone.mapper.UserMapper;
 import com.dev.startupone.repository.UserRepository;
 import com.dev.startupone.security.JwtService;
 import com.dev.startupone.service.AuthenticationService;
@@ -28,10 +29,9 @@ import static com.dev.startupone.lib.util.ConstantsUtils.DEFAULT_VERSION;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-
+    private final UserMapper mapper;
 
     @Override
     public AuthResponse register(final RegisterRequest request) {
@@ -39,7 +39,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (validatingExistingUser(request.email()))
             throw new DataBaseException("User " + request.email() + " exists in the database!.");
         log.info("[1] - Mapping new user.");
-        var user = requestToUser(request);
+        var user = mapper.requestToUser(request);
         log.info("[2] - Saving to user in the database.");
         var userId = saveToUser(user);
         log.info("[3] - Generate Access TOKEN.");
@@ -48,29 +48,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .userId(userId)
                 .build();
     }
-
-    private UserModel requestToUser(RegisterRequest request) {
-        return UserModel.builder()
-                .firstName(request.firstName())
-                .lastName(request.lastName())
-                .email(request.email())
-                .password(passwordEncoder.encode(request.password()))
-                .role(Role.USER)
-                .creatAt(LocalDateTime.now())
-                .updateAt(null)
-                .build();
-    }
-
     private boolean validatingExistingUser(final String email) {
         List<UserModel> lsUser = userRepository.findAllUserByEmail(email);
         return !lsUser.isEmpty();
     }
-
     private Long saveToUser(final UserModel user){
         UserModel savedUser = userRepository.save(user);
         return savedUser.getId();
     }
-
     @Override
     public AuthResponse authenticate(final AuthRequest request) {
         authenticationManager.authenticate(

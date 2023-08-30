@@ -11,6 +11,8 @@ public record UserResponse (
         String firstName,
         String lastName,
         String email,
+        String cpfcnpj,
+        String paymentId,
         Role permission,
         LocalDateTime creatAt,
         LocalDateTime updateAt

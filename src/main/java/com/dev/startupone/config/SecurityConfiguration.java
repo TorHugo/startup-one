@@ -17,7 +17,9 @@ public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
-    private static final String[] PUBLIC = { "/api/v1/auth/**", "/h2-console/**" };
+
+    private static final String[] PUBLIC = {"/api/v1/auth/**"};
+    private static final String[] ADMIN = {"/api/v1/finance-active/**"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity security) throws Exception {
@@ -25,11 +27,10 @@ public class SecurityConfiguration {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers(request ->
-                        !request.getServletPath().startsWith("/h2-console") && // Ignorar URLs do H2 Console
-                                (request.getServletPath().startsWith("/api/v1/auth/") || // Mapeamento para suas APIs
-                                        request.getServletPath().equals("/")))
+                .requestMatchers(PUBLIC)
                 .permitAll()
+                .requestMatchers(ADMIN)
+                .hasRole("ACCESS_USER_ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()

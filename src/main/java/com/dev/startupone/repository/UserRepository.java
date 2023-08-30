@@ -16,4 +16,10 @@ public interface UserRepository extends JpaRepository<UserModel, Long> {
 
     Optional<UserModel> findByEmail(final String email);
     List<UserModel> findAllUserByEmail(final String email);
+
+    @Transactional
+    @Modifying
+    @Query("update UserModel user set user.paymentId = ?1, user.updateAt = SYSDATE where user.id = ?2")
+    void updatePaymentIdById(final String paymentId, final Long id);
+
 }

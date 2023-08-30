@@ -1,4 +1,6 @@
-## DATABASE
+##############
+## DATABASE ##
+##############
 spring:
   datasource:
     url: jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
@@ -7,8 +9,26 @@ spring:
     driver-class-name: oracle.jdbc.OracleDriver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     open-in-view: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.OracleDialect
+
+############
+## TOKEN  ##
+############
+access:
+  token:
+    value: ${access_token_assas}
+
+############
+## CLIENT ##
+############
+request:
+  host:
+    value: https://sandbox.asaas.com/api/v3
+  endpoint:
+    client:
+      creat_client:
+        value: /customers
