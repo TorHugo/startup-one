@@ -1,8 +1,8 @@
 package com.dev.startupone.resource;
 
-import com.dev.startupone.lib.dto.AuthRequest;
-import com.dev.startupone.lib.dto.AuthResponse;
-import com.dev.startupone.lib.dto.RegisterRequest;
+import com.dev.startupone.lib.data.dto.AuthRequest;
+import com.dev.startupone.lib.data.dto.AuthResponse;
+import com.dev.startupone.lib.data.dto.RegisterRequest;
 import com.dev.startupone.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

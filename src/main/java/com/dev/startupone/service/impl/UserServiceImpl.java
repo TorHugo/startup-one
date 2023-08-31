@@ -1,8 +1,8 @@
 package com.dev.startupone.service.impl;
 
-import com.dev.startupone.lib.domain.UserModel;
-import com.dev.startupone.lib.dto.UserRequest;
-import com.dev.startupone.lib.dto.UserResponse;
+import com.dev.startupone.lib.data.domain.UserModel;
+import com.dev.startupone.lib.data.dto.UserRequest;
+import com.dev.startupone.lib.data.dto.UserResponse;
 import com.dev.startupone.lib.exception.impl.DataBaseException;
 import com.dev.startupone.mapper.UserMapper;
 import com.dev.startupone.repository.UserRepository;
@@ -10,10 +10,6 @@ import com.dev.startupone.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
-
-import static com.dev.startupone.lib.util.ValidationUtils.isNullOrElse;
-import static com.dev.startupone.lib.util.ParseUtils.parseString;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +42,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
     private UserModel userById(final Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new DataBaseException("exception.user.not.found"));
+        return userRepository.recoverById(userId);
     }
 }

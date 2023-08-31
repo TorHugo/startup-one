@@ -1,4 +1,4 @@
-package com.dev.startupone.lib.dto;
+package com.dev.startupone.lib.data.dto;
 
 import lombok.Builder;
 

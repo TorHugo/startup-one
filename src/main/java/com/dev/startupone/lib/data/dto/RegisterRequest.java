@@ -1,5 +1,6 @@
-package com.dev.startupone.lib.dto;
+package com.dev.startupone.lib.data.dto;
 
+import com.dev.startupone.lib.data.enums.Role;
 import lombok.Builder;
 
 @Builder
@@ -8,6 +9,7 @@ public record RegisterRequest(
         String lastName,
         String email,
         String password,
-        String cpfcnpj
+        String cpfcnpj,
+        Role role
 ) {
 }

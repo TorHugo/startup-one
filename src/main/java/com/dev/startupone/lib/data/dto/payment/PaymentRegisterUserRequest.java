@@ -1,4 +1,4 @@
-package com.dev.startupone.lib.dto.payment;
+package com.dev.startupone.lib.data.dto.payment;
 
 import lombok.Builder;
 

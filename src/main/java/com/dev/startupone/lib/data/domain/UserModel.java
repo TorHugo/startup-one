@@ -1,6 +1,6 @@
-package com.dev.startupone.lib.domain;
+package com.dev.startupone.lib.data.domain;
 
-import com.dev.startupone.lib.enums.Role;
+import com.dev.startupone.lib.data.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "t_user")
+@Table(name = "user_tb")
 public class UserModel implements UserDetails {
 
     @Id
@@ -37,18 +37,15 @@ public class UserModel implements UserDetails {
 
     private String cpfcnpj;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+//    @Enumerated(EnumType.STRING)
+    private String role;
 
-    private LocalDateTime creatAt;
-
+    private LocalDateTime createAt;
     private LocalDateTime updateAt;
-
-    private String paymentId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(role));
     }
 
     @Override

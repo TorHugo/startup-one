@@ -1,11 +1,10 @@
 package com.dev.startupone.mapper;
 
-import com.dev.startupone.lib.domain.UserModel;
-import com.dev.startupone.lib.dto.RegisterRequest;
-import com.dev.startupone.lib.dto.UserRequest;
-import com.dev.startupone.lib.dto.UserResponse;
-import com.dev.startupone.lib.dto.payment.PaymentRegisterUserRequest;
-import com.dev.startupone.lib.enums.Role;
+import com.dev.startupone.lib.data.domain.UserModel;
+import com.dev.startupone.lib.data.dto.RegisterRequest;
+import com.dev.startupone.lib.data.dto.UserRequest;
+import com.dev.startupone.lib.data.dto.UserResponse;
+import com.dev.startupone.lib.data.dto.payment.PaymentRegisterUserRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -37,8 +36,8 @@ public class UserMapper {
                 .email(user.getEmail())
                 .permission(user.getRole())
                 .cpfcnpj(user.getCpfcnpj())
-                .paymentId(user.getPaymentId())
-                .creatAt(user.getCreatAt())
+//                .paymentId(user.getPaymentId())
+                .creatAt(user.getCreateAt())
                 .updateAt(user.getUpdateAt())
                 .build();
     }
@@ -49,8 +48,8 @@ public class UserMapper {
                 .lastName(request.lastName())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
-                .role(Role.ACCESS_USER)
-                .creatAt(LocalDateTime.now())
+                .role(request.role().name())
+                .createAt(LocalDateTime.now())
                 .updateAt(null)
                 .cpfcnpj(request.cpfcnpj())
                 .build();
@@ -66,7 +65,7 @@ public class UserMapper {
                 .cpfcnpj(parseString(isNullOrElse(request.cpfcnpj(), before.getCpfcnpj())))
                 .role(before.getRole())
                 .updateAt(LocalDateTime.now())
-                .creatAt(before.getCreatAt())
+                .createAt(before.getCreateAt())
                 .build();
     }
 }

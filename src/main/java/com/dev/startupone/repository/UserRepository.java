@@ -1,25 +1,9 @@
 package com.dev.startupone.repository;
 
-import com.dev.startupone.lib.domain.UserModel;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import com.dev.startupone.lib.data.domain.UserModel;
 
-import java.util.List;
-import java.util.Optional;
-
-@Repository
-public interface UserRepository extends JpaRepository<UserModel, Long> {
-
-
-    Optional<UserModel> findByEmail(final String email);
-    List<UserModel> findAllUserByEmail(final String email);
-
-    @Transactional
-    @Modifying
-    @Query("update UserModel user set user.paymentId = ?1, user.updateAt = SYSDATE where user.id = ?2")
-    void updatePaymentIdById(final String paymentId, final Long id);
-
+public interface UserRepository {
+    UserModel recoverByEmail(final String email);
+    void save(final UserModel user);
+    UserModel recoverById(final Long id);
 }

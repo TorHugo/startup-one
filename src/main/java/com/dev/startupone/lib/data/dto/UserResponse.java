@@ -1,6 +1,6 @@
-package com.dev.startupone.lib.dto;
+package com.dev.startupone.lib.data.dto;
 
-import com.dev.startupone.lib.enums.Role;
+import com.dev.startupone.lib.data.enums.Role;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -13,7 +13,7 @@ public record UserResponse (
         String email,
         String cpfcnpj,
         String paymentId,
-        Role permission,
+        String permission,
         LocalDateTime creatAt,
         LocalDateTime updateAt
 ){

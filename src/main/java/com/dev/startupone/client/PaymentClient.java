@@ -1,13 +1,12 @@
 package com.dev.startupone.client;
 
-import com.dev.startupone.lib.dto.payment.PaymentRegisterUserRequest;
-import com.dev.startupone.lib.dto.payment.PaymentRegisterUserResponse;
+import com.dev.startupone.lib.data.dto.payment.PaymentRegisterUserRequest;
+import com.dev.startupone.lib.data.dto.payment.PaymentRegisterUserResponse;
 import com.dev.startupone.lib.exception.impl.ResourceNotFoundException;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;

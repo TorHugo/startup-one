@@ -19,7 +19,6 @@ public class SecurityConfiguration {
     private final AuthenticationProvider authenticationProvider;
 
     private static final String[] PUBLIC = {"/api/v1/auth/**"};
-    private static final String[] ADMIN = {"/api/v1/finance-active/**"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity security) throws Exception {
@@ -29,8 +28,6 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers(PUBLIC)
                 .permitAll()
-                .requestMatchers(ADMIN)
-                .hasRole("ACCESS_USER_ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()

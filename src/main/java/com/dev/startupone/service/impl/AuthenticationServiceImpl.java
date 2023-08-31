@@ -1,10 +1,9 @@
 package com.dev.startupone.service.impl;
 
-import com.dev.startupone.lib.domain.UserModel;
-import com.dev.startupone.lib.dto.AuthRequest;
-import com.dev.startupone.lib.dto.AuthResponse;
-import com.dev.startupone.lib.dto.RegisterRequest;
-import com.dev.startupone.lib.enums.Role;
+import com.dev.startupone.lib.data.domain.UserModel;
+import com.dev.startupone.lib.data.dto.AuthRequest;
+import com.dev.startupone.lib.data.dto.AuthResponse;
+import com.dev.startupone.lib.data.dto.RegisterRequest;
 import com.dev.startupone.lib.exception.impl.DataBaseException;
 import com.dev.startupone.mapper.UserMapper;
 import com.dev.startupone.repository.UserRepository;
@@ -15,13 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
-
-import static com.dev.startupone.lib.util.ConstantsUtils.DEFAULT_VERSION;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -48,14 +44,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .userId(userId)
                 .build();
     }
+
     private boolean validatingExistingUser(final String email) {
-        List<UserModel> lsUser = userRepository.findAllUserByEmail(email);
-        return !lsUser.isEmpty();
+        UserModel user = userRepository.recoverByEmail(email);
+        return Objects.nonNull(user);
     }
+
     private Long saveToUser(final UserModel user){
-        UserModel savedUser = userRepository.save(user);
-        return savedUser.getId();
+        userRepository.save(user);
+        return userRepository.recoverByEmail(user.getEmail()).getId();
     }
+
     @Override
     public AuthResponse authenticate(final AuthRequest request) {
         authenticationManager.authenticate(
@@ -64,8 +63,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         request.password()
                 )
         );
-        var user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
+        var user = userRepository.recoverByEmail(request.email());
+
+        if (Objects.isNull(user))
+            throw new DataBaseException("User not found!");
 
         return AuthResponse.builder()
                 .token(jwtService.generateToken(user))

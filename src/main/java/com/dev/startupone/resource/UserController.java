@@ -1,7 +1,7 @@
 package com.dev.startupone.resource;
 
-import com.dev.startupone.lib.dto.UserRequest;
-import com.dev.startupone.lib.dto.UserResponse;
+import com.dev.startupone.lib.data.dto.UserRequest;
+import com.dev.startupone.lib.data.dto.UserResponse;
 import com.dev.startupone.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
