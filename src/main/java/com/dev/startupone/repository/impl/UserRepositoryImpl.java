@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-@PropertySource("classpath:query/user_read.properties")
+@PropertySource("classpath:query/user_query.properties")
 public class UserRepositoryImpl implements UserRepository {
 
     private final DatabaseService service;

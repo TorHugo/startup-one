@@ -1,6 +1,5 @@
 package com.dev.startupone.lib.data.domain;
 
-import com.dev.startupone.lib.data.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,7 +36,6 @@ public class UserModel implements UserDetails {
 
     private String cpfcnpj;
 
-//    @Enumerated(EnumType.STRING)
     private String role;
 
     private LocalDateTime createAt;

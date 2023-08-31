@@ -5,10 +5,12 @@ import com.dev.startupone.lib.data.dto.RegisterRequest;
 import com.dev.startupone.lib.data.dto.UserRequest;
 import com.dev.startupone.lib.data.dto.UserResponse;
 import com.dev.startupone.lib.data.dto.payment.PaymentRegisterUserRequest;
+import com.dev.startupone.lib.data.enums.RoleEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import javax.management.relation.Role;
 import java.time.LocalDateTime;
 
 import static com.dev.startupone.lib.util.ParseUtils.parseString;
@@ -48,7 +50,7 @@ public class UserMapper {
                 .lastName(request.lastName())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
-                .role(request.role().name())
+                .role(RoleEnum.ACCESS_USER.name())
                 .createAt(LocalDateTime.now())
                 .updateAt(null)
                 .cpfcnpj(request.cpfcnpj())

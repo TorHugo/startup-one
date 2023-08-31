@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum FinanceCategory {
+public enum CategoryEnum {
 
     FINANCIAL_STOCKS(1L, "enum.finance.category.stocks"),
     FINANCIAL_CURRENCY(2L, "enum.finance.category.currency"),

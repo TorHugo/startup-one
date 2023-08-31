@@ -1,6 +1,7 @@
 package com.dev.startupone.resource;
 
-import com.dev.startupone.service.FinanceActiveService;
+import com.dev.startupone.lib.data.dto.active.ActiveRequest;
+import com.dev.startupone.service.ActiveService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/finance-active")
 @RequiredArgsConstructor
-public class FinanceActiveController {
+public class ActiveController {
 
-    private final FinanceActiveService financeActiveService;
+    private final ActiveService activeService;
 
     @PostMapping("/create")
     public ResponseEntity<String> testing(
-            @RequestBody final Object object
+            @RequestBody final ActiveRequest object
     ){
-        return ResponseEntity.ok(financeActiveService.createActive(object));
+        return ResponseEntity.ok(activeService.createActive(object));
     }
 }
