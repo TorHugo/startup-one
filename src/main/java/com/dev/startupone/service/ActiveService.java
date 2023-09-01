@@ -1,8 +1,13 @@
 package com.dev.startupone.service;
 
 import com.dev.startupone.lib.data.dto.active.ActiveRequest;
+import com.dev.startupone.lib.data.dto.active.ActiveFullResponse;
 import com.dev.startupone.lib.data.dto.active.ActiveResponse;
 
+import java.util.List;
+
 public interface ActiveService {
-    ActiveResponse createActive(final ActiveRequest object);
+    ActiveFullResponse createActive(final ActiveRequest object);
+
+    List<ActiveResponse> findActive(final String category, final String name);
 }

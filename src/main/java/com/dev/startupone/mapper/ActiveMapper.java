@@ -6,6 +6,10 @@ import com.dev.startupone.lib.data.dto.active.*;
 import com.dev.startupone.lib.data.enums.CategoryEnum;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.dev.startupone.lib.util.ValidationUtils.isNull;
 
 @Component
@@ -31,8 +35,8 @@ public class ActiveMapper {
         return isNull(signal.signalBuy()) ? signal.signalSale().force() : signal.signalBuy().force();
     }
 
-    public ActiveResponse mapper (final ActiveModel active, final VariantModel variant){
-        return ActiveResponse.builder()
+    public ActiveFullResponse mapper (final ActiveModel active, final VariantModel variant){
+        return ActiveFullResponse.builder()
                 .activeId(active.getId())
                 .name(active.getName())
                 .category(active.getCategory())
@@ -42,5 +46,15 @@ public class ActiveMapper {
                         .variation(variant.getVariation())
                         .build())
                 .build();
+    }
+
+    public List<ActiveResponse> mapper(final List<ActiveModel> activeModels) {
+        return activeModels.stream()
+                .map(active -> ActiveResponse.builder()
+                        .activeId(active.getId())
+                        .name(active.getName())
+                        .description(active.getDescription())
+                        .category(active.getCategory())
+                        .build()).collect(Collectors.toList());
     }
 }

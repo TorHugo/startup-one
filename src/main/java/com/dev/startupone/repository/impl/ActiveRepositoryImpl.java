@@ -11,6 +11,9 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Map;
+
 @Slf4j
 @Repository
 @RequiredArgsConstructor
@@ -21,6 +24,8 @@ public class ActiveRepositoryImpl implements ActiveRepository {
 
     @Value("${SPS.ACTIVE.WHERE.NAME}")
     private String queryRecoverByName;
+    @Value("${SPS.ACTIVE.WHERE.CATEGORY}")
+    private String queryRecoverAllByCategory;
     @Value("${SPI.ACTIVE}")
     private String queryPersistActive;
     @Override
@@ -37,9 +42,17 @@ public class ActiveRepositoryImpl implements ActiveRepository {
         service.persist(queryPersistActive, activeModel);
     }
 
+    @Override
+    public List<ActiveModel> recoverAllByCategory(final String category) {
+        return service.retrieveList(queryRecoverAllByCategory,
+                                    buildParamCategory(category),
+                                    BeanPropertyRowMapper.newInstance(ActiveModel.class));
+    }
+
     private MapSqlParameterSource buildParam(final String name){
-        final MapSqlParameterSource parameter = new MapSqlParameterSource();
-        parameter.addValue("name", name);
-        return parameter;
+        return new MapSqlParameterSource("name", name);
+    }
+    private MapSqlParameterSource buildParamCategory(final String category){
+        return new MapSqlParameterSource("category", category);
     }
 }
