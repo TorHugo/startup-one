@@ -16,49 +16,48 @@ import java.time.Instant;
 @ControllerAdvice
 public class ResourceExceptionHandler {
 
-	static private HttpStatus notFound = HttpStatus.NOT_FOUND;
-	static private HttpStatus badRequest = HttpStatus.BAD_REQUEST;
-	static private HttpStatus unProcessable = HttpStatus.UNPROCESSABLE_ENTITY;
+	private static final HttpStatus notFound = HttpStatus.NOT_FOUND;
+	private static final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+	private static final HttpStatus unProcessable = HttpStatus.UNPROCESSABLE_ENTITY;
 
 
 	@ExceptionHandler(ResourceNotFoundException.class)
-	public ResponseEntity<StandardError> entityNotFound(ResourceNotFoundException exception,
-                                                        HttpServletRequest request){
+	public ResponseEntity<StandardError> entityNotFound(final ResourceNotFoundException exception,
+														final HttpServletRequest request){
 		StandardError err = new StandardError();
 		err.setTimestamp(Instant.now());
 		err.setStatus(notFound.value());
 		err.setError("Resource not found.");
 		err.setMessage(exception.getMessage());
-		err.setRelativePath(request.getRequestURI());
+		err.setPath(request.getRequestURI());
 
 		return ResponseEntity.status(notFound).body(err);
 	}
 
 	@ExceptionHandler(DataBaseException.class)
-	public ResponseEntity<StandardError> dataBase(DataBaseException exception,
-														HttpServletRequest request){
+	public ResponseEntity<StandardError> dataBase(final DataBaseException exception,
+												  final HttpServletRequest request){
 		StandardError err = new StandardError();
 
 		err.setTimestamp(Instant.now());
 		err.setStatus(badRequest.value());
 		err.setError("DataBase exception.");
 		err.setMessage(exception.getMessage());
-		err.setRelativePath(request.getRequestURI());
-		err.setCorrectPath("/api/v1/auth/authenticate");
+		err.setPath(request.getRequestURI());
 
 		return ResponseEntity.status(badRequest).body(err);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ValidationError> validation(MethodArgumentNotValidException exception,
-                                                      HttpServletRequest request){
+	public ResponseEntity<ValidationError> validation(final MethodArgumentNotValidException exception,
+													  final HttpServletRequest request){
 		ValidationError err = new ValidationError();
 
 		err.setTimestamp(Instant.now());
 		err.setStatus(unProcessable.value());
 		err.setError("Validation exception.");
 		err.setMessage(exception.getMessage());
-		err.setRelativePath(request.getRequestURI());
+		err.setPath(request.getRequestURI());
 
 		for (FieldError error : exception.getBindingResult().getFieldErrors()){
 			err.addError(error.getField(), error.getDefaultMessage());

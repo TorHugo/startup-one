@@ -2,19 +2,19 @@ package com.dev.startupone.mapper;
 
 import com.dev.startupone.lib.data.domain.ActiveModel;
 import com.dev.startupone.lib.data.domain.VariantModel;
-import com.dev.startupone.lib.data.dto.active.ActiveRequest;
-import com.dev.startupone.lib.data.dto.active.SignalRequest;
-import com.dev.startupone.lib.data.dto.active.VariantRequest;
+import com.dev.startupone.lib.data.dto.active.*;
+import com.dev.startupone.lib.data.enums.CategoryEnum;
 import org.springframework.stereotype.Component;
 
 import static com.dev.startupone.lib.util.ValidationUtils.isNull;
+
 @Component
 public class ActiveMapper {
     public ActiveModel mapper(final ActiveRequest active) {
         return ActiveModel.builder()
                 .name(active.name())
                 .description(active.description())
-                .category(active.category())
+                .category(CategoryEnum.parse(active.category()))
                 .build();
     }
 
@@ -29,5 +29,18 @@ public class ActiveMapper {
 
     private String returnSignal(final SignalRequest signal){
         return isNull(signal.signalBuy()) ? signal.signalSale().force() : signal.signalBuy().force();
+    }
+
+    public ActiveResponse mapper (final ActiveModel active, final VariantModel variant){
+        return ActiveResponse.builder()
+                .activeId(active.getId())
+                .name(active.getName())
+                .category(active.getCategory())
+                .variant(VariantResponse.builder()
+                        .variantId(variant.getId())
+                        .value(variant.getValue())
+                        .variation(variant.getVariation())
+                        .build())
+                .build();
     }
 }

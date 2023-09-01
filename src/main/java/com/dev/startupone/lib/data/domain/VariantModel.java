@@ -23,7 +23,7 @@ public class VariantModel {
     private Long id;
     private Long activeId;
     private BigDecimal value;
-    private BigDecimal variation;
+    private Float variation;
     private BigDecimal volume;
     private String signal;
 

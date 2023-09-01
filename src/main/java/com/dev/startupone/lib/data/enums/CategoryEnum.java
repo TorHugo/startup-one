@@ -1,7 +1,10 @@
 package com.dev.startupone.lib.data.enums;
 
+import com.dev.startupone.lib.exception.impl.DataBaseException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.Arrays;
 
 @AllArgsConstructor
 @Getter
@@ -15,4 +18,8 @@ public enum CategoryEnum {
     private final Long id;
     private final String description;
 
+    public static String parse(final String category) {
+        return Arrays.stream(values()).filter(object -> object.name().equals(category))
+                .findFirst().orElseThrow(() -> new DataBaseException("Value from domain not found!.")).name();
+    }
 }

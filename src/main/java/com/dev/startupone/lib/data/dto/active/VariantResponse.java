@@ -5,10 +5,9 @@ import lombok.Builder;
 import java.math.BigDecimal;
 
 @Builder
-public record VariantRequest(
+public record VariantResponse(
+        Long variantId,
         BigDecimal value,
-        Float variation,
-        BigDecimal volume,
-        SignalRequest signal
+        Float variation
 ) {
 }

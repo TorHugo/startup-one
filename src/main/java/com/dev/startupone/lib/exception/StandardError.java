@@ -19,6 +19,5 @@ public class StandardError implements Serializable{
 	private Integer status;
 	private String error;
 	private String message;
-	private String relativePath;
-	private String correctPath;
+	private String path;
 }

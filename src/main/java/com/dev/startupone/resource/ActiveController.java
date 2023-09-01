@@ -1,6 +1,7 @@
 package com.dev.startupone.resource;
 
 import com.dev.startupone.lib.data.dto.active.ActiveRequest;
+import com.dev.startupone.lib.data.dto.active.ActiveResponse;
 import com.dev.startupone.service.ActiveService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class ActiveController {
     private final ActiveService activeService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> testing(
+    public ResponseEntity<ActiveResponse> testing(
             @RequestBody final ActiveRequest object
     ){
         return ResponseEntity.ok(activeService.createActive(object));

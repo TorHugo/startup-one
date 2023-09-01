@@ -3,6 +3,7 @@ package com.dev.startupone.service.impl;
 import com.dev.startupone.lib.data.domain.ActiveModel;
 import com.dev.startupone.lib.data.domain.VariantModel;
 import com.dev.startupone.lib.data.dto.active.ActiveRequest;
+import com.dev.startupone.lib.data.dto.active.ActiveResponse;
 import com.dev.startupone.mapper.ActiveMapper;
 import com.dev.startupone.repository.ActiveRepository;
 import com.dev.startupone.repository.VariantRepository;
@@ -23,7 +24,7 @@ public class ActiveServiceImpl implements ActiveService {
     private final ActiveMapper activeMapper;
 
     @Override
-    public String createActive(final ActiveRequest active) {
+    public ActiveResponse createActive(final ActiveRequest active) {
         ActiveModel recoverActive = null;
 
         log.info("[1] - Mapping active.");
@@ -39,7 +40,13 @@ public class ActiveServiceImpl implements ActiveService {
         }
         log.info("[4] - Saving variant in the database.");
         saveVariant(variantModel, recoverActive);
-        return null;
+        log.info("[5] - Mapping response.");
+        VariantModel recoverVariant = recoverVariant(variantModel);
+        return activeMapper.mapper(recoverActive, recoverVariant);
+    }
+
+    private VariantModel recoverVariant(final VariantModel variantModel) {
+        return variantRepository.recoverByActiveId(variantModel.getActiveId());
     }
 
     private void saveActive(final ActiveModel activeModel) {

@@ -1,12 +1,7 @@
 package com.dev.startupone.lib.data.enums;
 
-import com.dev.startupone.lib.exception.impl.DataBaseException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 @AllArgsConstructor
 @Getter
