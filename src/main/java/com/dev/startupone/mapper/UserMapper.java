@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import javax.management.relation.Role;
 import java.time.LocalDateTime;
 
 import static com.dev.startupone.lib.util.ParseUtils.parseString;
@@ -57,7 +56,8 @@ public class UserMapper {
                 .build();
     }
 
-    public UserModel mappingUser(final UserRequest request, final UserModel before) {
+    public UserModel mappingUser(final UserRequest request,
+                                 final UserModel before) {
         return UserModel.builder()
                 .id(before.getId())
                 .email(parseString(isNullOrElse(request.email(), before.getEmail())))

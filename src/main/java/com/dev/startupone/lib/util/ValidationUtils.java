@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class ValidationUtils {
 
+    private ValidationUtils() {}
     public static Object isNullOrElse(final Object oldObject, final Object newObject){
         return Objects.isNull(oldObject) ? newObject : oldObject;
     }

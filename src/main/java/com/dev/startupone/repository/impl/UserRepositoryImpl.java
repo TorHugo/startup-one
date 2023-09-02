@@ -13,6 +13,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import static com.dev.startupone.lib.util.ValidationUtils.isNull;
+
 @Slf4j
 @Repository
 @RequiredArgsConstructor
@@ -28,6 +30,9 @@ public class UserRepositoryImpl implements UserRepository {
     @Value("${SPI.USER}")
     private String queryPersistUser;
 
+    @Value("${SPU.USER}")
+    private String queryUpdateUser;
+
     @Value("${SPS.USER.WHERE.ID}")
     private String queryRecoverById;
 
@@ -41,8 +46,21 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void save(final UserModel user) {
-        log.info("[-] - To save.");
-        service.persist(queryPersistUser, user);
+        log.info("[-] - To save().");
+        if (isNull(user.getId()))
+            service.persist(queryPersistUser, user);
+        else
+            service.persist(queryUpdateUser, buildParams(user));
+    }
+
+    private MapSqlParameterSource buildParams(final UserModel user) {
+        MapSqlParameterSource parameter = new MapSqlParameterSource();
+        parameter.addValue("firstName", user.getFirstName());
+        parameter.addValue("lastName", user.getLastName());
+        parameter.addValue("email", user.getEmail());
+        parameter.addValue("cpfcnpj", user.getCpfcnpj());
+        parameter.addValue("userId", user.getId());
+        return parameter;
     }
 
     @Override

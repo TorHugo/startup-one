@@ -11,6 +11,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Slf4j
 @Repository
 @RequiredArgsConstructor
@@ -23,6 +25,9 @@ public class VariantRepositoryImpl implements VariantRepository {
     private String queryPersistVariant;
     @Value("${SPS.VARIANT.WHERE.ACTIVE_ID}")
     private String queryRecoverVariant;
+    @Value("${SPS.ALL_VARIANT.WHERE.ACTIVE_ID}")
+    private String queryRecoverAllVariantByActiveId;
+
     @Override
     public void saveVariant(final VariantModel variantModel) {
         service.persist(queryPersistVariant, variantModel);
@@ -34,6 +39,13 @@ public class VariantRepositoryImpl implements VariantRepository {
                                 buildParam(activeId),
                                 BeanPropertyRowMapper.newInstance(VariantModel.class))
                 .orElse(null);
+    }
+
+    @Override
+    public List<VariantModel> recoverAllByActiveId(final Long activeId) {
+        return service.retrieveList(queryRecoverAllVariantByActiveId,
+                                buildParam(activeId),
+                                BeanPropertyRowMapper.newInstance(VariantModel.class));
     }
 
     private MapSqlParameterSource buildParam(final Long activeId){

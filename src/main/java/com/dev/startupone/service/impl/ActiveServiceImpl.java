@@ -2,9 +2,9 @@ package com.dev.startupone.service.impl;
 
 import com.dev.startupone.lib.data.domain.ActiveModel;
 import com.dev.startupone.lib.data.domain.VariantModel;
-import com.dev.startupone.lib.data.dto.active.ActiveRequest;
-import com.dev.startupone.lib.data.dto.active.ActiveFullResponse;
-import com.dev.startupone.lib.data.dto.active.ActiveResponse;
+import com.dev.startupone.lib.data.domain.ActiveCustom;
+import com.dev.startupone.lib.data.dto.active.*;
+import com.dev.startupone.lib.exception.impl.DataBaseException;
 import com.dev.startupone.mapper.ActiveMapper;
 import com.dev.startupone.repository.ActiveRepository;
 import com.dev.startupone.repository.VariantRepository;
@@ -50,19 +50,61 @@ public class ActiveServiceImpl implements ActiveService {
     }
 
     @Override
-    public List<ActiveResponse> findActive(final String category, final String name) {
+    public List<ActiveResponse> findAllActive(final String category) {
         log.info("[-] - Validating what response.");
         if (nonNull(category)) {
             log.info("[0] - Retrieve active by category. Category: [{}].", category);
-            final List<ActiveModel> actives = activeRepository.recoverAllByCategory(category);
+            final List<ActiveCustom> actives = recoverActiveByCategory(category);
             log.info("[1] - Mapping response.");
             return activeMapper.mapper(actives);
         }
-        if (nonNull(name))
-            log.info("[0] - Retrieve active by name.");
 
         log.info("[0] - Retrieve all active.");
-        return null;
+        final List<ActiveCustom> actives = recoverAllActive();
+        log.info("[1] - Mapping response.");
+        return activeMapper.mapper(actives);
+    }
+    @Override
+    public ActiveResponse findActiveByName(final String name) {
+        log.info("[0] - Retrieve active by name. Name: [{}].", name);
+        final ActiveCustom active = recoverActiveName(name);
+        log.info("[1] - Retrieve all variant by activeId.");
+        List<VariantModel> lsVariants = recoverVariantByActiveId(active.getActiveId());
+        log.info("[2] - Mapping variant to response.");
+        List<VariantResponse> lsVariantsResponse = activeMapper.mapperVariants(lsVariants);
+        log.info("[1] - Mapping response.");
+        return activeMapper.mapper(active, lsVariantsResponse);
+    }
+
+    @Override
+    public ActiveResponse updateActiveByName(final String name, final ActiveUpdate request) {
+        log.info("[0] - Initial update active. ActiveName: [{}].", name);
+        log.info("[1] - Retrieving active from database.");
+        final ActiveCustom recoverActive = recoverActiveName(name);
+        log.info("[2] - Mapping newActive.");
+        final ActiveModel model = activeMapper.mapperToActiveModel(request, recoverActive);
+        log.info("[3] - Saving new active in the database.");
+        saveActive(model);
+        log.info("[4] - Mapping to response.");
+        return activeMapper.mapper(model);
+    }
+
+
+    private List<VariantModel> recoverVariantByActiveId(final Long activeId) {
+        return variantRepository.recoverAllByActiveId(activeId);
+    }
+    private List<ActiveCustom> recoverAllActive() {
+        return activeRepository.recoverAllActive(null, null);
+    }
+
+    private List<ActiveCustom> recoverActiveByCategory(final String category) {
+        return activeRepository.recoverAllActive(category, null);
+    }
+
+    private ActiveCustom recoverActiveName(final String name) {
+        return activeRepository.recoverAllActive(null, name)
+                .stream().findFirst()
+                .orElseThrow(() -> new DataBaseException("exception.object.not.found"));
     }
 
     private VariantModel recoverVariant(final VariantModel variantModel) {
