@@ -10,6 +10,7 @@ import java.util.List;
 public interface ActiveService {
     ActiveFullResponse createActive(final ActiveRequest object);
     List<ActiveResponse> findAllActive(final String category);
-    ActiveResponse findActiveByName(final String name);
-    ActiveResponse updateActiveByName(final String name, final ActiveUpdate active);
+    List<ActiveResponse> findActiveByName(final String name, final String timeOffer);
+    ActiveResponse updateActiveByName(final String name, final String timeOffer, final ActiveUpdate active);
+    List<ActiveResponse> findActiveFilter(final String signal, final String date);
 }

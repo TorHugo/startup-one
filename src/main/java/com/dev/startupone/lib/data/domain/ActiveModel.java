@@ -24,6 +24,7 @@ public class ActiveModel {
     private String name;
     private String description;
     private String category;
+    private String timeOffer;
 
     private LocalDateTime createAt;
     private LocalDateTime updateAt;

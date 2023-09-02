@@ -5,6 +5,7 @@ import com.dev.startupone.lib.data.domain.ActiveModel;
 import com.dev.startupone.lib.data.domain.VariantModel;
 import com.dev.startupone.lib.data.dto.active.*;
 import com.dev.startupone.lib.data.enums.CategoryEnum;
+import com.dev.startupone.lib.data.enums.TimeOfferEnum;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ public class ActiveMapper {
                 .name(active.name())
                 .description(active.description())
                 .category(CategoryEnum.parse(active.category()))
+                .timeOffer(TimeOfferEnum.parse(active.timeOffer()))
                 .build();
     }
 
@@ -52,6 +54,7 @@ public class ActiveMapper {
                 .activeId(active.getId())
                 .name(active.getName())
                 .category(active.getCategory())
+                .timeOffer(active.getTimeOffer())
                 .variant(VariantResponse.builder()
                         .variantId(variant.getId())
                         .value(variant.getValue())
@@ -87,6 +90,7 @@ public class ActiveMapper {
                 .updateAt(active.getUpdateAt())
                 .value(active.getValue())
                 .signal(returnSignal(active))
+                .timeOffer(active.getTimeOffer())
                 .variants(lsVariantsResponse)
                 .build();
     }

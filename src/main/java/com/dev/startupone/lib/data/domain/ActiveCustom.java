@@ -26,4 +26,5 @@ public class ActiveCustom {
     private BigDecimal value;
     private String signal;
     private Boolean isBuy;
+    private String timeOffer;
 }

@@ -9,6 +9,7 @@ public record ActiveFullResponse(
         Long activeId,
         String name,
         String category,
+        String timeOffer,
         VariantResponse variant
 ) {
 }

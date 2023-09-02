@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.dev.startupone.lib.util.ValidationUtils.isNull;
@@ -36,11 +37,11 @@ public class ActiveServiceImpl implements ActiveService {
         log.info("[2] - Mapping variant.");
         final VariantModel variantModel = activeMapper.mapper(active.variant());
         log.info("[3] - Validating existing active. Active: [{}].", active.name());
-        recoverActive = validatingExistingActive(active.name());
+        recoverActive = validatingExistingActive(active.name(), active.timeOffer());
         if (isNull(recoverActive)) {
             log.info("[-] - Saving active in the database.");
             saveActive(activeModel);
-            recoverActive = validatingExistingActive(active.name());
+            recoverActive = validatingExistingActive(active.name(), active.timeOffer());
         }
         log.info("[4] - Saving variant in the database.");
         saveVariant(variantModel, recoverActive);
@@ -65,22 +66,31 @@ public class ActiveServiceImpl implements ActiveService {
         return activeMapper.mapper(actives);
     }
     @Override
-    public ActiveResponse findActiveByName(final String name) {
-        log.info("[0] - Retrieve active by name. Name: [{}].", name);
-        final ActiveCustom active = recoverActiveName(name);
-        log.info("[1] - Retrieve all variant by activeId.");
-        List<VariantModel> lsVariants = recoverVariantByActiveId(active.getActiveId());
-        log.info("[2] - Mapping variant to response.");
-        List<VariantResponse> lsVariantsResponse = activeMapper.mapperVariants(lsVariants);
-        log.info("[1] - Mapping response.");
-        return activeMapper.mapper(active, lsVariantsResponse);
+    public List<ActiveResponse> findActiveByName(final String name, final String timeOffer) {
+        List<ActiveResponse> activeResponses = new ArrayList<>();
+        log.info("[0] - Retrieve active by name. Name: [{}] and TimeOffer: [{}].", name, timeOffer);
+        final List<ActiveCustom> lsActive = recoverActiveName(name, timeOffer);
+
+        lsActive.forEach(active -> {
+            log.info("[1] - Retrieve all variant by activeId.");
+            List<VariantModel> lsVariants = recoverVariantByActiveId(active.getActiveId());
+            log.info("[2] - Mapping variant to response.");
+            List<VariantResponse> lsVariantsResponse = activeMapper.mapperVariants(lsVariants);
+            log.info("[3] - Mapping variant in to active.");
+            ActiveResponse response = activeMapper.mapper(active, lsVariantsResponse);
+            activeResponses.add(response);
+        });
+
+        log.info("[4] - Mapping response.");
+        return activeResponses;
     }
 
     @Override
-    public ActiveResponse updateActiveByName(final String name, final ActiveUpdate request) {
+    public ActiveResponse updateActiveByName(final String name, final String timeOffer, final ActiveUpdate request) {
         log.info("[0] - Initial update active. ActiveName: [{}].", name);
         log.info("[1] - Retrieving active from database.");
-        final ActiveCustom recoverActive = recoverActiveName(name);
+        final ActiveCustom recoverActive = recoverActiveName(name, timeOffer)
+                                            .stream().findFirst().orElseThrow(() -> new DataBaseException(""));
         log.info("[2] - Mapping newActive.");
         final ActiveModel model = activeMapper.mapperToActiveModel(request, recoverActive);
         log.info("[3] - Saving new active in the database.");
@@ -94,17 +104,15 @@ public class ActiveServiceImpl implements ActiveService {
         return variantRepository.recoverAllByActiveId(activeId);
     }
     private List<ActiveCustom> recoverAllActive() {
-        return activeRepository.recoverAllActive(null, null);
+        return activeRepository.recoverAllActive(null, null, null);
     }
 
     private List<ActiveCustom> recoverActiveByCategory(final String category) {
-        return activeRepository.recoverAllActive(category, null);
+        return activeRepository.recoverAllActive(category, null, null);
     }
 
-    private ActiveCustom recoverActiveName(final String name) {
-        return activeRepository.recoverAllActive(null, name)
-                .stream().findFirst()
-                .orElseThrow(() -> new DataBaseException("exception.object.not.found"));
+    private List<ActiveCustom> recoverActiveName(final String name, final String timeOffer) {
+        return activeRepository.recoverAllActive(null, name, timeOffer);
     }
 
     private VariantModel recoverVariant(final VariantModel variantModel) {
@@ -120,7 +128,7 @@ public class ActiveServiceImpl implements ActiveService {
         variantRepository.saveVariant(variantModel);
     }
 
-    private ActiveModel validatingExistingActive(final String name) {
-        return activeRepository.recoverByName(name);
+    private ActiveModel validatingExistingActive(final String name, final String timeOffer) {
+        return activeRepository.recoverByName(name, timeOffer);
     }
 }

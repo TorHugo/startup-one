@@ -16,6 +16,8 @@ public record ActiveResponse(
         String name,
         String description,
         String category,
+        @JsonProperty("time_offer")
+        String timeOffer,
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm", timezone = "UTC")
         @JsonProperty("create_at")
         LocalDateTime createAt,

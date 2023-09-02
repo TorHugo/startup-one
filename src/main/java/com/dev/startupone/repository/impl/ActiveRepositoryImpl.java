@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.dev.startupone.lib.util.ValidationUtils.isNull;
 import static com.dev.startupone.lib.util.ValidationUtils.nonNull;
@@ -33,15 +34,17 @@ public class ActiveRepositoryImpl implements ActiveRepository {
     private String queryRecoverAllActive;
     @Value("${SPS.ACTIVE.WHERE.FIND_NAME}")
     private String queryRecoverFindName;
+    @Value("${SPS.ACTIVE.WHERE.FIND_NAME.AND.TIME_OFFER}")
+    private String queryRecoverFindNameAndTimeOffer;
     @Value("${SPI.ACTIVE}")
     private String queryPersistActive;
     @Value("${SPU.ACTIVE}")
     private String queryUpdateActive;
     @Override
-    public ActiveModel recoverByName(final String name) {
+    public ActiveModel recoverByName(final String name, final String timeOffer) {
         log.info("[-] - recoverByName().");
         return service.retrieve(queryRecoverByName,
-                buildParam(name),
+                buildParam(name, timeOffer),
                 BeanPropertyRowMapper.newInstance(ActiveModel.class))
                 .orElse(null);
     }
@@ -64,11 +67,20 @@ public class ActiveRepositoryImpl implements ActiveRepository {
     }
 
     @Override
-    public List<ActiveCustom> recoverAllActive(final String category, final String name) {
-        if (nonNull(name))
+    public List<ActiveCustom> recoverAllActive(final String category,
+                                               final String name,
+                                               final String timeOffer) {
+        if (nonNull(name)) {
+            if (nonNull(timeOffer))
+                return service.retrieveList(queryRecoverFindNameAndTimeOffer,
+                        buildParam(name, timeOffer),
+                        BeanPropertyRowMapper.newInstance(ActiveCustom.class));
+
             return service.retrieveList(queryRecoverFindName,
-                                    buildParam(name),
-                                    BeanPropertyRowMapper.newInstance(ActiveCustom.class));
+                    buildParam(name),
+                    BeanPropertyRowMapper.newInstance(ActiveCustom.class));
+        }
+
         if (nonNull(category))
             return service.retrieveList(queryRecoverAllByCategory,
                                     buildParamCategory(category),
@@ -80,6 +92,12 @@ public class ActiveRepositoryImpl implements ActiveRepository {
 
     private MapSqlParameterSource buildParam(final String name){
         return new MapSqlParameterSource("name", name);
+    }
+    private MapSqlParameterSource buildParam(final String name, final String timeOffer){
+        MapSqlParameterSource parameter = new MapSqlParameterSource();
+        parameter.addValue("timeOffer", timeOffer);
+        parameter.addValue("name", name);
+        return parameter;
     }
     private MapSqlParameterSource buildParamCategory(final String category){
         return new MapSqlParameterSource("category", category);
