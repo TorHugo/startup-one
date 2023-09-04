@@ -18,8 +18,12 @@ public enum CategoryEnum {
     private final Long id;
     private final String description;
 
-    public static String parse(final String category) {
+    public static CategoryEnum parse(final String category) {
         return Arrays.stream(values()).filter(object -> object.name().equals(category))
-                .findFirst().orElseThrow(() -> new DataBaseException("Value from domain not found!.")).name();
+                .findFirst().orElseThrow(() -> new DataBaseException("Value from domain not found!."));
+    }
+    public static CategoryEnum parse(final Long categoryId) {
+        return Arrays.stream(values()).filter(object -> object.id.equals(categoryId))
+                .findFirst().orElseThrow(() -> new DataBaseException("Value from domain not found!."));
     }
 }

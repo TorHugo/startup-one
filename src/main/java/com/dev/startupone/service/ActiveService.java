@@ -9,8 +9,10 @@ import java.util.List;
 
 public interface ActiveService {
     ActiveFullResponse createActive(final ActiveRequest object);
-    List<ActiveResponse> findAllActive(final String category);
-    List<ActiveResponse> findActiveByName(final String name, final String timeOffer);
+    List<ActiveResponse> findAllActive(final String category,
+                                       final String name,
+                                       final String timeOffer,
+                                       final String signal,
+                                       final String order);
     ActiveResponse updateActiveByName(final String name, final String timeOffer, final ActiveUpdate active);
-    List<ActiveResponse> findActiveFilter(final String signal, final String date);
 }

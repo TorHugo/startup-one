@@ -25,7 +25,7 @@ public class VariantModel {
     private BigDecimal value;
     private Float variation;
     private BigDecimal volume;
-    private String signal;
+    private Long signalId;
     private Boolean isBuy;
 
     private LocalDateTime createAt;

@@ -5,6 +5,7 @@ import com.dev.startupone.lib.data.domain.ActiveModel;
 import com.dev.startupone.lib.data.domain.VariantModel;
 import com.dev.startupone.lib.data.dto.active.*;
 import com.dev.startupone.lib.data.enums.CategoryEnum;
+import com.dev.startupone.lib.data.enums.SignalEnum;
 import com.dev.startupone.lib.data.enums.TimeOfferEnum;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 import static com.dev.startupone.lib.util.ValidationUtils.isNull;
 import static com.dev.startupone.lib.util.ValidationUtils.isNullOrElse;
 import static com.dev.startupone.lib.util.ParseUtils.parseString;
+import static com.dev.startupone.lib.util.ParseUtils.parseLong;
 
 @Component
 public class ActiveMapper {
@@ -22,7 +24,7 @@ public class ActiveMapper {
         return ActiveModel.builder()
                 .name(active.name())
                 .description(active.description())
-                .category(CategoryEnum.parse(active.category()))
+                .categoryId(parseToCategory(active.category()).getId())
                 .timeOffer(TimeOfferEnum.parse(active.timeOffer()))
                 .build();
     }
@@ -32,7 +34,7 @@ public class ActiveMapper {
                 .value(variant.value())
                 .variation(variant.variation())
                 .volume(variant.volume())
-                .signal(returnSignal(variant.signal()))
+                .signalId(returnSignal(variant.signal()))
                 .isBuy(returnIsBuy(variant.signal()))
                 .build();
     }
@@ -44,8 +46,12 @@ public class ActiveMapper {
         return Boolean.TRUE;
     }
 
-    private String returnSignal(final SignalRequest signal){
-        return isNull(signal.signalBuy()) ? signal.signalSale().force() : signal.signalBuy().force();
+    private Long returnSignal(final SignalRequest signal){
+        final SignalEnum signalEnum = SignalEnum.parse(
+                isNull(signal.signalBuy()) ? signal.signalSale().force() : signal.signalBuy().force()
+        );
+
+        return signalEnum.getId();
     }
 
     public ActiveFullResponse mapper (final ActiveModel active,
@@ -53,12 +59,13 @@ public class ActiveMapper {
         return ActiveFullResponse.builder()
                 .activeId(active.getId())
                 .name(active.getName())
-                .category(active.getCategory())
+                .category(parseToCategory(active.getCategoryId()).name())
                 .timeOffer(active.getTimeOffer())
                 .variant(VariantResponse.builder()
                         .variantId(variant.getId())
                         .value(variant.getValue())
                         .variation(variant.getVariation())
+                        .createAt(variant.getCreateAt())
                         .build())
                 .build();
     }
@@ -70,7 +77,8 @@ public class ActiveMapper {
                                     .activeId(active.getActiveId())
                                     .name(active.getName())
                                     .description(active.getDescription())
-                                    .category(active.getCategory())
+                                    .category(CategoryEnum.parse(active.getCategoryId()).name())
+                                    .timeOffer(active.getTimeOffer())
                                     .createAt(active.getCreateAt())
                                     .updateAt(active.getUpdateAt())
                                     .value(active.getValue())
@@ -85,7 +93,7 @@ public class ActiveMapper {
                 .activeId(active.getActiveId())
                 .name(active.getName())
                 .description(active.getDescription())
-                .category(active.getCategory())
+                .category(CategoryEnum.parse(active.getCategoryId()).name())
                 .createAt(active.getCreateAt())
                 .updateAt(active.getUpdateAt())
                 .value(active.getValue())
@@ -96,10 +104,12 @@ public class ActiveMapper {
     }
 
     private SignalRequest returnSignal(final ActiveCustom active) {
+        final SignalEnum signalEnum = SignalEnum.parse(active.getSignalId());
+
         if (active.getIsBuy())
             return SignalRequest.builder()
                     .signalBuy(SignalObject.builder()
-                            .force(active.getSignal())
+                            .force(signalEnum.name())
                             .build())
                     .signalSale(null)
                     .build();
@@ -107,7 +117,7 @@ public class ActiveMapper {
         return SignalRequest.builder()
                 .signalBuy(null)
                 .signalSale(SignalObject.builder()
-                        .force(active.getSignal())
+                        .force(signalEnum.name())
                         .build())
                 .build();
     }
@@ -128,20 +138,32 @@ public class ActiveMapper {
                 .id(before.getActiveId())
                 .name(parseString(isNullOrElse(request.name(), before.getName())))
                 .description(parseString(isNullOrElse(request.description(), before.getDescription())))
-                .category(parseString(isNullOrElse(request.category(), before.getCategory())))
+                .categoryId(parseLong(
+                        isNullOrElse(
+                                parseToCategory(request.category()).getId(),
+                                parseToCategory(before.getCategoryId()).getId())
+                        )
+                )
                 .createAt(before.getCreateAt())
                 .updateAt(LocalDateTime.now())
                 .build();
     }
 
-    public ActiveResponse mapper(final ActiveModel model) {
+    public ActiveResponse mapper(final ActiveModel active) {
         return ActiveResponse.builder()
-                .activeId(model.getId())
-                .name(model.getName())
-                .description(model.getDescription())
-                .category(model.getCategory())
-                .createAt(model.getCreateAt())
-                .updateAt(model.getUpdateAt())
+                .activeId(active.getId())
+                .name(active.getName())
+                .description(active.getDescription())
+                .category(parseToCategory(active.getCategoryId()).name())
+                .createAt(active.getCreateAt())
+                .updateAt(active.getUpdateAt())
                 .build();
+    }
+
+    private CategoryEnum parseToCategory(final Long categoryId){
+        return CategoryEnum.parse(categoryId);
+    }
+    private CategoryEnum parseToCategory(final String categoryName){
+        return CategoryEnum.parse(categoryName);
     }
 }

@@ -27,19 +27,15 @@ public class ActiveController {
         return ResponseEntity.ok(activeService.createActive(object));
     }
 
-    @GetMapping("/all-category")
+    @GetMapping("/filter")
     public ResponseEntity<List<ActiveResponse>> findAllActive(
-            @RequestParam(value = "category", required = false) final String category
+            @RequestParam(value = "category", required = false) final String category,
+            @RequestParam(value = "name", required = false) final String name,
+            @RequestParam(value = "timeOffer", required = false) final String timeOffer,
+            @RequestParam(value = "signal", required = false) final String signal,
+            @RequestParam(value = "order") final String order
     ){
-        return ResponseEntity.ok(activeService.findAllActive(category));
-    }
-
-    @GetMapping("/name")
-    public ResponseEntity<List<ActiveResponse>> findActiveByName(
-            @RequestParam(value = "name", required = true) final String name,
-            @RequestParam(value = "timeOffer", required = false) final String timeOffer
-    ){
-        return ResponseEntity.ok(activeService.findActiveByName(name, timeOffer));
+        return ResponseEntity.ok(activeService.findAllActive(category, name, timeOffer, signal, order));
     }
 
     @PutMapping(value = "/{name}/{timeOffer}")
@@ -49,14 +45,5 @@ public class ActiveController {
             @RequestBody final ActiveUpdate active
     ){
         return ResponseEntity.ok(activeService.updateActiveByName(name, timeOffer, active));
-    }
-
-    @GetMapping("/filter")
-    public ResponseEntity<List<ActiveResponse>> findAllActiveOfFilter(
-            @RequestParam(value = "signal", required = false) final String signal,
-            @RequestParam(value = "date", required = false) final String date
-
-    ){
-        return ResponseEntity.ok(activeService.findActiveFilter(signal, date));
     }
 }
