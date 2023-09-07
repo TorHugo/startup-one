@@ -4,8 +4,8 @@
 spring:
   datasource:
     url: jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
-    username: ${oracle-username-fiap}
-    password: ${oracle-password-fiap}
+    username: RM93518
+    password: 190304
     driver-class-name: oracle.jdbc.OracleDriver
   jpa:
     hibernate:
@@ -20,7 +20,7 @@ spring:
 ############
 access:
   token:
-    value: ${access_token_assas}
+    value: $aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAwNjQyODc6OiRhYWNoX2MxZTMxYzljLWI2M2ItNDM4YS05Njc3LWFjYjVjZjRiODQxYw==
 
 ############
 ## CLIENT ##
