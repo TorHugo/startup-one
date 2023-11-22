@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/finance-active")
 @RequiredArgsConstructor
+@CrossOrigin
 public class ActiveController {
 
     private final ActiveService activeService;
